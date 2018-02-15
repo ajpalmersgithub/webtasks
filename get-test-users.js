@@ -13,16 +13,20 @@ module.exports = function(ctx, cb) {
         function con_str(done) {
             MongoClient.connect(MONGO_URL, function(err, db) {
                 if(err) return done(err);
-                
+
                 done(null, db);
             });
       },
         
       function insert_users(db, done) {
          request(url, (error, response, body) => {
-          var json = JSON.parse(body);
-  
-              db.collection('test-users').insert({users: json}, function (err, result) {
+          var users = JSON.parse(body);
+           db.collection('test-users').deleteMany({},
+           function (err, result) {
+                  if(err) return done(err);
+                  done(null, result);
+           }),
+              db.collection('test-users').insert({users: users}, function (err, result) {
                   if(err) return done(err);
 
                   done(null, result);
